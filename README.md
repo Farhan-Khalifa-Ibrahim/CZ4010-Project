@@ -1,13 +1,18 @@
 # CZ4010-Project
-Bentuk database:
+## Bentuk database:
 title 1
+
 description 1
+
 addresal 1
+
 title 2
+
 description 2
+
 addresal 2
 
-Flow terminal:
+## Flow terminal:
 1. Pilih user atau admin
 
 2. List fitur (user)
