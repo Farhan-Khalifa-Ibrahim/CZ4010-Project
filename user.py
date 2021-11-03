@@ -4,8 +4,8 @@ def read_issues():
     with open('database.txt') as file:
         database = file.readlines()
 
-    # print issues title
     while True:
+        # print issues title
         print()
         print("*****************************************************")
         index = 0
@@ -19,6 +19,7 @@ def read_issues():
         print("*****************************************************")
         print("Choose the issue you want to read!")
         first_input = int(input())
+
         # Choose issue to read or exit
         if first_input == total_titles:
             break
