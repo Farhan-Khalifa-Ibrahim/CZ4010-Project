@@ -17,10 +17,10 @@ def read_issues():
         print(f'{total_titles}) exit')
         print()
         print("*****************************************************")
-        print("Choose the issue you want to read!")
-        first_input = int(input())
 
         # Choose issue to read or exit
+        print("Choose the issue you want to read!")
+        first_input = int(input())
         if first_input == total_titles:
             break
         elif 1 <= first_input <= total_titles-1:
