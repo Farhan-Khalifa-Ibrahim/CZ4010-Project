@@ -3,3 +3,7 @@ __pycache__
 
 # Testing playground
 test.py
+
+# Firebase related keys
+firebase_key.json
+service_account.json
