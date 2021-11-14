@@ -10,7 +10,7 @@ class user_class:
         cred = credentials.Certificate('service_account.json')
         firebase_admin.initialize_app(cred)
         issue_repo = IssueRepository()
-        readdrsal_repo = RedressalRepository()
+        redressal_repo = RedressalRepository()
 
     def read_issues(self):
         pass
