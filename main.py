@@ -8,7 +8,7 @@ from repository.redressal_repository import RedressalRepository, RedressalItemRe
 from repository.user_repository import UserRepository
 from service.auth_service import AuthService
 from getpass import getpass
-from user import user_class
+from service.user_service import user_class
 
 
 def init_firebase_sdk():
