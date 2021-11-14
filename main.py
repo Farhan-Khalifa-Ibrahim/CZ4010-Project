@@ -8,6 +8,7 @@ from repository.redressal_repository import RedressalRepository, RedressalItemRe
 from repository.user_repository import UserRepository
 from service.auth_service import AuthService
 from getpass import getpass
+from user import user_class
 
 
 def init_firebase_sdk():
@@ -44,6 +45,8 @@ def sign_in(auth: AuthService, repo: UserRepository):
         pass
     else:
         # TODO: Run user flow
+        user = user_class(user)
+        user.main()
         pass
 
 
