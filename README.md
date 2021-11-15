@@ -1,4 +1,8 @@
 # CZ4010-Project
+
+## Report
+[Project Report](https://docs.google.com/document/d/1muj1oRSUr-6eK2ajxkuAor-gu8bGWZPGdCS-bRVE-aM/edit?usp=sharing)
+
 ## Resource
 [Grievance Redressal](https://en.wikipedia.org/wiki/Grievance_redressal)
 [Production example app](https://docs.digit.org/)
