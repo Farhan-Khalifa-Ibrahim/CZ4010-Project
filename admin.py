@@ -15,7 +15,7 @@ class AdminFlow:
     @property
     def issues_for_category(self):
         """Returns issues that are the same category as the admin user's category."""
-        issues = self.issue_repo.list()
+        issues = self.issue_repo.list_by_issue_votes()
         return list(filter(lambda i: i.category == self.user.category, issues))
 
     def connect_redressal(self, issue):
@@ -187,10 +187,13 @@ class AdminFlow:
                                     REDRESSED, self.issues_for_category))
 
             if len(redressed) > 0:
+                redressed = self.issue_repo.list_by_redressal_votes(
+                    self.red_repo.list()
+                )
                 print(
                     '\nHere are all issues that have been redressed and the corresponding response from users.')
                 print('0. Back')
-                print_redressed_issues(redressed, self.red_repo.list())
+                print_redressed_issues(redressed, self.red_repo)
                 action = input('Choose redressal to view: ')
 
                 if action == '0':

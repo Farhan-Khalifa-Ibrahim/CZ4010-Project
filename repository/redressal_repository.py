@@ -38,8 +38,11 @@ class RedressalRepository(FirestoreRepository):
         self.save(redressal)
 
     def items(self, redressal: Redressal) -> List[RedressalItem]:
-        return list(map(lambda id: self.item_repo.get(id), redressal.item_ids))
-    
+        items = list(
+            map(lambda id: self.item_repo.get(id), redressal.item_ids))
+
+        return sorted(items, key=lambda item: item.created_at)
+
     def clear_votes(self, redressal: Redressal):
         redressal.upvotes.clear()
         redressal.downvotes.clear()

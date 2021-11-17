@@ -6,6 +6,7 @@ from data.const import REDRESSED
 from data.issue import Issue
 from data.redressal import Redressal, RedressalItem
 from data.user import User
+from repository.redressal_repository import RedressalRepository
 
 
 def print_issues(issues: List[Issue]):
@@ -20,29 +21,18 @@ def print_issues(issues: List[Issue]):
         issues (List[Issue]): The list of issues.
     """
 
-    # Sort issues based on the votes
-    sorted_issues = sorted(issues, key=lambda i: i.up_count + i.down_count)
-
-    for num, issue in enumerate(sorted_issues, start=1):
+    for num, issue in enumerate(issues, start=1):
         print(
-            f"{num}) {issue.title} ({issue.up_count} 👍 {issue.down_count} 👎) ({issue.status})"
+            f"{num}. {issue.title} ({issue.up_count} 👍 {issue.down_count} 👎) ({issue.status})"
         )
 
 
-def print_redressed_issues(issues: List[Issue], redressal: List[Redressal]):
-    redressal_dict = {}
-
-    for r in redressal:
-        redressal_dict[r.id] = r
-
-    sorted_issues = sorted(
-        issues, key=lambda i: redressal_dict[i.redressal_id].up_count + redressal_dict[i.redressal_id].down_count)
-
-    for num, issue in enumerate(sorted_issues, start=1):
-        r = redressal_dict[issue.redressal_id]
+def print_redressed_issues(issues: List[Issue], repo: RedressalRepository):
+    for num, issue in enumerate(issues, start=1):
+        r = repo.get(issue.redressal_id)
 
         print(
-            f"{num}) Redressal for '{issue.title}' ({r.up_count} 👍 {r.down_count} 👎)"
+            f"{num}. Redressal for '{issue.title}' ({r.up_count} 👍 {r.down_count} 👎)"
         )
 
 
@@ -63,9 +53,7 @@ def print_issue_details(issue: Issue, user: User):
 
 
 def print_redressal_items(items: List[RedressalItem]):
-    sorted_items = sorted(items, key=lambda i: i.created_at)
-
-    for item in sorted_items:
+    for item in items:
         timing = datetime.strftime(item.created_dt, '%d %B %Y, %H:%M')
         print(f'({timing}) {item.message}')
 
