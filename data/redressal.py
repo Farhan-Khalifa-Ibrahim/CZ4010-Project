@@ -34,6 +34,9 @@ class Redressal:
         Returns:
             bool: `true` if the system should notify admin to reconsider this redressal.
         """
+        if self.down_count == 0:
+            return False
+            
         total_votes = self.up_count + self.down_count
         neg_percent = int(self.up_count * 100 / self.down_count)
 
