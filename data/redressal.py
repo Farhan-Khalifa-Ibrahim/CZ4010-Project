@@ -42,7 +42,7 @@ class Redressal:
     @staticmethod
     def from_firestore(id, data):
         return Redressal(
-            id=data['id'],
+            id=id,
             created_at=data['created_at'],
             item_ids=data['item_ids'],
             upvotes=data['upvotes'],

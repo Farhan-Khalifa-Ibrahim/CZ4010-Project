@@ -90,10 +90,12 @@ class FirestoreRepository:
 
         if (data.id == ''):
             # Insert
-            self.collection.add(firestore_data)
+            inserted = self.collection.add(firestore_data)[1].get()
+            return self._create_from_doc(inserted.id, inserted.to_dict())
         else:
             # Update
             self.collection.document(data.id).set(firestore_data)
+            return data
 
     def get(self, id: str):
         """Returns the object from the given id.

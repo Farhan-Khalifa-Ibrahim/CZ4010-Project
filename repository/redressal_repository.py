@@ -9,7 +9,7 @@ class RedressalRepository(FirestoreRepository):
     def _object_type(self):
         return Redressal
 
-    def create_from_doc(self, id: str, data: dict):
+    def _create_from_doc(self, id: str, data: dict):
         return Redressal.from_firestore(id, data)
 
 
