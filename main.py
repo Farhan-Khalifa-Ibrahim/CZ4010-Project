@@ -9,6 +9,7 @@ from repository.user_repository import UserRepository
 from service.auth_service import AuthService
 from getpass import getpass
 from service.user_service import user_class
+from admin import AdminFlow
 
 
 def init_firebase_sdk():
@@ -35,6 +36,7 @@ def sign_in(auth: AuthService, repo: UserRepository):
         uid = auth.sign_in(email, password)
     except Exception:
         print('Failed to login! Make you sure your credentials are correct.')
+        return
 
     # Get the user data
     user = repo.get(uid)
@@ -42,7 +44,8 @@ def sign_in(auth: AuthService, repo: UserRepository):
     # Run the main app flow
     if user.is_admin:
         # TODO: Run admin flow
-        pass
+        admin_flow = AdminFlow(user)
+        admin_flow.main()
     else:
         # TODO: Run user flow
         user = user_class(user)
@@ -78,16 +81,14 @@ def main():
     auth = create_auth_service()
 
     # Create the repositories
-    issue_repo = IssueRepository()
-    redressal_repo = RedressalRepository()
-    redressal_item_repo = RedressalItemRepository()
     user_repo = UserRepository()
 
     while True:
         print('Welcome to the app! Please select your action.')
+        print('0. Exit')
         print('1. Sign In')
         print('2. Sign Up')
-        print('0. Exit')
+
         action = input('Action: ')
 
         print()
