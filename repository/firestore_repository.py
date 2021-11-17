@@ -71,7 +71,7 @@ class FirestoreRepository:
         Returns:
             list: All items in the database.
         """
-        return self._items.values()
+        return list(self._items.values())
 
     def save(self, data):
         """Persists the given data to the database. This operation can be insert or update.

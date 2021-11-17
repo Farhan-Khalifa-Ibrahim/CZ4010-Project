@@ -47,7 +47,6 @@ def sign_in(auth: AuthService, repo: UserRepository):
         # TODO: Run user flow
         user = user_class(user)
         user.main()
-        pass
 
 
 def sign_up(auth: AuthService, repo: UserRepository):

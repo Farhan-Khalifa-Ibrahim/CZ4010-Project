@@ -8,8 +8,6 @@ from data.issue import Issue
 class user_class:
     def __init__(self, user):
         self.user = user
-        cred = credentials.Certificate('service_account.json')
-        firebase_admin.initialize_app(cred)
         self.issue_repo = IssueRepository()
         self.redressal_repo = RedressalRepository()
         self.new_vote_issue_ids = set()
@@ -44,7 +42,7 @@ class user_class:
                 upvotes = len(issue.upvotes)
                 downvotes = len(issue.downvotes)
                 print(str(index+1)+") "+issue.title, end=" ")
-                print("("+str(upvotes)+"\U+1F44D"+str(downvotes)+"\U+1F44E"+")", end=" ")
+                print("("+str(upvotes)+"👍"+str(downvotes)+"👎"+")", end=" ")
                 print("("+str(issue.status)+")")
             action = int(input("Action: "))
 
@@ -62,7 +60,7 @@ class user_class:
                 print("Description: "+issue.desc)
                 print("Category: ", issue.category)
                 print("Status: ", issue.status)
-                print("votes: "+str(issue.upvotes)+"\U+1F44D"+str(issue.downvotes)+"\U+1F44E")
+                print("votes: "+str(issue.upvotes)+"👍"+str(issue.downvotes)+"👎")
 
                 # If use already voted
                 if user_vote:
@@ -100,7 +98,7 @@ class user_class:
                 upvotes = len(issue.upvotes)
                 downvotes = len(issue.downvotes)
                 print(str(index+1)+") "+issue.title, end=" ")
-                print("("+str(upvotes)+"\U+1F44D"+str(downvotes)+"\U+1F44E"+")", end=" ")
+                print("("+str(upvotes)+"👍"+str(downvotes)+"👎"+")", end=" ")
                 print("("+str(issue.status)+")")
             action = int(input("Action: "))
 
@@ -132,7 +130,7 @@ class user_class:
                 print("Issue: "+issue.title)
                 print("Status: "+issue.status)
                 print("Redressal id: "+redressal_id)
-                print("votes: "+str(redressal.upvotes)+"\U+1F44D"+str(redressal.downvotes)+"\U+1F44E")
+                print("votes: "+str(redressal.upvotes)+"👍"+str(redressal.downvotes)+"👎")
 
                 # TODO: List Redressal Timeline
 
@@ -195,17 +193,17 @@ class user_class:
     def main(self):
         while True:
             print("""
-                What do you want to do?
-                1. Read issue
-                2. Read redressal
-                3. Post issue
-                0. Exit
+What do you want to do?
+1. Read issue
+2. Read redressal
+3. Post issue
+0. Exit
             """)
             action = int(input("Action: "))
             if action == 1:
                 self.read_issues()
             elif action == 2:
-                self.read_readdresals()
+                self.read_redressal()
             elif action == 3:
                 self.write_issue()
             elif action == 0:
