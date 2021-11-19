@@ -1,7 +1,8 @@
 from repository.issue_repository import IssueRepository
 from repository.redressal_repository import RedressalRepository
 from data.issue import Issue
-from utils.printing import print_issues, print_issue_details
+from data.const import IN_PROGRESS, REDRESSED
+from utils.printing import print_issues, print_issue_details, print_redressal_details
 
 
 class UserFlow:
@@ -9,8 +10,6 @@ class UserFlow:
         self.user = user
         self.issue_repo = IssueRepository()
         self.redressal_repo = RedressalRepository()
-        self.new_vote_issue_ids = set()
-        self.new_vote_redressal_ids = set()
 
     def upvote(self, user_id, issue, redressal):
         # upvote issue or redressal
@@ -62,69 +61,50 @@ class UserFlow:
                     if action == 1:
                         self.upvote(user_id=self.user.id,
                                     issue=issue, redressal=None)
-                        # add issue id to new_vote_issue_ids
-                        self.new_vote_issue_ids.add(issue.id)
                     elif action == 2:
                         self.downvote(user_id=self.user.id,
                                       issue=issue, redressal=None)
-                        # add issue id to new_vote_issue_ids
-                        self.new_vote_issue_ids.add(issue.id)
 
     def read_redressal(self):
-        issue_list = self.issue_repo.list()
         while True:
-            # print exit and list of issues
-            print("0) Exit")
-            for index, issue in enumerate(issue_list):
-                upvotes = len(issue.upvotes)
-                downvotes = len(issue.downvotes)
-                print(str(index+1)+") "+issue.title, end=" ")
-                print("("+str(upvotes)+"👍"+str(downvotes)+"👎"+")", end=" ")
-                print("("+str(issue.status)+")")
-            action = int(input("Action: "))
+            print()
+            print('For which issue do you want to see the redressal?')
+            issue_list = self.issue_repo.list_by_issue_votes()
 
+            # print exit and list of issues
+            print("0. Exit")
+            print_issues(issue_list)
+            action = int(input("Action: "))
             if action == 0:
                 break
 
             else:
+                print()
+
                 issue = issue_list[action-1]
                 user_voted = False
                 redressal_id = issue.redressal_id
-                if redressal_id != None:
-                    redressal = self.redressal_repo.get(redressal_id)
+
+                if redressal_id == None:
+                    print('No redressal have been made. Please check again later.')
+                    continue
+
+                redressal = self.redressal_repo.get(redressal_id)
+                redressal_items = self.redressal_repo.items(redressal)
 
                 # Check user has vote the redressal
-                if redressal_id in self.new_vote_redressal_ids or self.user.id in redressal.upvotes or self.user.id in redressal.downvotes:
+                if self.user.id in redressal.upvotes or self.user.id in redressal.downvotes:
                     user_voted = True
 
-                """
-                Issue: Bis NTU lambat
-                Status: REDRESSED
-                Redressal id: asjdkasduhid
-                Votes: 50 👍 3 👎
-                (4 Nov 2021 07:00) Admin is taking action -> waktu status diganti jd in progress
-                (4 Nov 2021 08:00) Redirected to supervisor
-                (4 Nov 2021 10:00) Communicating to Tong Tar Transport
-                (4 Nov 2021 11:00) Action completed
-                """
-
-                print("Issue: "+issue.title)
-                print("Status: "+issue.status)
-                print("Redressal id: "+redressal_id)
-                print("votes: "+str(redressal.upvotes) +
-                      "👍"+str(redressal.downvotes)+"👎")
-
-                # TODO: List Redressal Timeline
+                print_redressal_details(issue, redressal, redressal_items)
 
                 if user_voted:
-                    print("You have voted for this issue")
-                    print("0) Exit")
-                    action = int(input("Action: "))
-                    if action == 0:
-                        pass
-
+                    if self.user.id in redressal.upvotes:
+                        print("You 👍 this redressal.")
+                    else:
+                        print('You 👎 this redressal.')
                 else:
-                    print("You haven't voted for this issue")
+                    print("You haven't voted for this redressal!")
                     print("0) Exit")
                     print("1) Upvote")
                     print("2) Downvote")
@@ -132,19 +112,15 @@ class UserFlow:
                     if action == 1:
                         self.upvote(user_id=self.user.id,
                                     issue=None, redressal=redressal)
-                        # add issue id to new_vote_redressal_ids
-                        self.new_vote_redressal_ids.add(redressal_id)
                     elif action == 2:
                         self.downvote(user_id=self.user.id,
                                       issue=None, redressal=redressal)
-                        # add issue id to new_vote_redressal_ids
-                        self.new_vote_redressal_ids.add(redressal_id)
-                    else:
-                        pass
 
     def write_issue(self):
+        print()
         issue_category = ""
         print("Choose the issue category you want to publish")
+        print('0) Cancel')
         print("1) Admin")
         print("2) Transport")
         print("3) Environment")
@@ -152,6 +128,10 @@ class UserFlow:
 
         # User new issue input
         action = int(input("Action: "))
+
+        if action == 0:
+            return
+
         options = {
             1: "ADMIN",
             2: "TRANSPORT",
@@ -171,6 +151,7 @@ class UserFlow:
 
         # save issue
         self.issue_repo.save(new_issue)
+        print('Your issue has been posted successfully!')
 
     def main(self):
         while True:

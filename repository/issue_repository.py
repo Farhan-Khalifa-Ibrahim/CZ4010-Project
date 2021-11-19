@@ -20,6 +20,8 @@ class IssueRepository(FirestoreRepository):
 
     def list_by_redressal_votes(self, redressals: List[Redressal]):
         issues = self.list()
+        issues = list(filter(lambda i: i.redressal_id != None, issues))
+        
         redressal_dict = {}
 
         for r in redressals:
