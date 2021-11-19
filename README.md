@@ -1,140 +1,68 @@
-# CZ4010-Project
+## Motivation
 
-## Report
-[Project Report](https://docs.google.com/document/d/1muj1oRSUr-6eK2ajxkuAor-gu8bGWZPGdCS-bRVE-aM/edit?usp=sharing)
+Grieve is a part of everyday life as a human. However, it does not mean that grieve should not be reported, especially if it is harmful to the society. Because everyone has a right to voice out to the one of authority responsibly. Unfortunately, their voices are not always heard or there are not enough attentions received. The main reason is that many voices lacks the power to remain relevant or seen as crucial.
 
-## Resource
-[Grievance Redressal](https://en.wikipedia.org/wiki/Grievance_redressal)
-[Production example app](https://docs.digit.org/)
+This application is designed to address this problem. We want to make it possible for any user with or without power to voice out their grieves safely and responsibly. Grieves are posted anonymously, and the system will deliver grieves to the corresponding authority. The public can attest to the reported issue by voting. The system also protects the one in authority. They can post issue redressal progress anonymously. If the system perceives that an issue is not genuine, they have the power to reject the reported issue.
 
-## Bentuk database
-title 1
+## Getting Started
 
-description 1
+### Requirements
 
-addresal 1
+These are the requirements for the project to run.
 
-title 2
+- [Python](https://www.python.org/) 3.7
+- A Firebase project with the following services enabled
+  - Firebase Authentication email/password provider
+  - Firestore
 
-description 2
+### Running the App
 
-addresal 2
+First, install the required dependencies for this project by running the following command.
 
-## Flow terminal
-1. Pilih login ato sign up -> pake Firebase Auth, butuh buat sign downvote/upvote/redressal
+```
+pip install -r requirements.txt
+```
 
-Sign up
-1. Enter username
-2. Enter password
-3. Balik
+Add the Firebase credential files required in the root folder of this project.
 
-Login
-1. Enter username
-2. Enter password
-3. App nentuin user ini user/admin
+1. [Generate the private key](https://firebase.google.com/docs/admin/setup#initialize-sdk) for your Firebase project and name it `service_account.json`.
+2. [Register a web app](https://cloud.google.com/appengine/docs/standard/python3/building-app/adding-firebase#adding_firebase_to_your_web_service) to Firebase. Copy the value of `firebaseConfig` into a json file named `firebase_key.json`.
 
-4. List fitur (user)
+Finally, run `main.py` to start the application.
 
-	a. liat issue
-	
-	c. post issue baru
+```
+python main.py
+```
 
-4. list fitur(admin)
+## Research
 
-	a. post addressal
-	
-	b. list issue
+TODO
 
+## Design Considerations
 
-Pilih list issue
-1. Ngelist semua issues -> sort by number of vote, tie breaker time
-	1) Bis NTU Lambat (50 👍 3 👎) (IN PROGRESS)
-	2) Tugas ini susah banget (26 👍 3 👎) (IN PROGRESS)
+### Anonymous with Responsibility
 
-2. pilih salah satu issue (misal 1)
-3. Display issue detail
+Issues, redressal, and votes do not display the user.
 
-Issue Detail
-1. title: Bis NTU lambat
-   
-   desc: Bisnya mepet2, pas dateng selalu full
+Responsibility measures:
 
-   category: ADMIN/TRANSPORT/ENVIRONMENT/EDUCATION
+- Posts, redressal, and votes can only be created if you have account
+- Only 1 account allowed per email address
 
-   status: PENDING/IN PROGRESS/REDRESSED/REJECTED
+### Transparency
 
-   votes: 50 👍 3 👎
+The public user can see the progress of redressal.
 
-   You [have/haven't] voted for this issue
+Display image of redressal timeline here
 
-2. Action berdasarkan status
-- pending/in progress -> upvote downvote (digital sign pake email user)
-- redressed -> view redressal (g ad voting lagi)
-- rejected -> N/A (g ad voting lagi)
+### Integrity of Grieve and Redressal
 
-Liat Redressal
-1. List issue (status == IN_PROGRESS/REDRESSED)
-2. User pilih issue
-3. Display redressal
+Issues and the corresponding redressal are ensured that they are genuine by public voting.
+Post issue -> the public supports your case
+Post redressal -> accountability of voting protects your case.
 
-Issue: Bis NTU lambat
-Status: REDRESSED
-Redressal id: asjdkasduhid
-Votes: 50 👍 3 👎
+## Development Stack
 
-(4 Nov 2021 07:00) Admin is taking action -> waktu status diganti jd in progress
-(4 Nov 2021 08:00) Redirected to supervisor
-(4 Nov 2021 10:00) Communicating to Tong Tar Transport
-(4 Nov 2021 11:00) Action completed
-
-4. Pilih action berdasarkan status
-- in progress -> N/A (g ad action, yg penting user bs liat)
-- redressed -> upvote/downvote
-
-pilih post issue baru
-1. Pilih category
-2. Input title
-3. Input desc
-3. post ke db
-
-### Admin
-2 new issues. (jumlah pending)
-3 issues in progress. (jumlah issue in progress)
-1 redressal complaint. (jumlah redressal yg banyak downvote)
-
-1. List Issue
-2. List Redressed
-#### List Issue
-1. List semua issue sesuai admin kategori, yg blom redressed, sort sama kek user
-2. Pilih issue
-3. Display kek user + actionsnya
-- Change status -> cmn bs kalo min. ada 10 vote DAN >50% downvote 
-- (kalo in progress) Log redressal
-- (kalo pending/in progress) Link to another redressal
-
-#### Log Redressal
-1. Input redressal message
-2. Submit (bareng sama digital signature adminnya)
-
-#### Link to Prev Redressal
-1. Input redressal id
-2. Submit
-
-#### List Redressed
-1. List issue yg udh redressed, tp pake redressal pov, sort pake jumlah vote, tp klo jumlah vote > 10 dan persentase downvote > 70% jd priority
-	1) Redressal for "Bis NTU Lambat" (3 👍 49 👎)
-	2) Redressal for "Tugas susah" (17 👍 3 👎)
-2. Pilih issue
-3. Action: re-redress (statusnya balik jd in progress)
-
-Considerations
-1.	Someone posts a grievance, but it is not a valid one. Thus, unfair to the accused.
-a.	There may be a voting mechanism where others “sign” the same petition. (jumlah sama proporsi vote nentuin ini beneran apa engga)
-b.	There must be a checks-and-balances mechanism to stop “false” claims. (admin bisa reject kalo vote cukup banyak(10) AND >70% downvote)
-2.	Someone posts a grievance, but it is not redressed. This is unfair to the accuser.
-a.	There may be an acknowledgement seeking mechanism from the accused. (post issue, trus divote orang2 publik)
-b.	There must be a way to “limelight” the grievances which are not redressed. (issue yg paling banyak divote bakal muncul di awal)
-3.	Someone posts a grievance, it is redressed, but nobody knows about the case.
-a.	Every redressed grievance should have a proper documentation trail record. (user bs liat redressal timeline)
-b.	Once again, there may be a voting mechanism for others to confirm this case. (abis redressed, user bs vote. kalo downvote banyak admin dinotify)
- 
+- Python cryptography library
+- Firebase Auth
+- Firebase Firestore
