@@ -1,11 +1,10 @@
-import firebase_admin
-from firebase_admin import credentials
 from repository.issue_repository import IssueRepository
 from repository.redressal_repository import RedressalRepository
 from data.issue import Issue
+from utils.printing import print_issues, print_issue_details
 
 
-class user_class:
+class UserFlow:
     def __init__(self, user):
         self.user = user
         self.issue_repo = IssueRepository()
@@ -34,44 +33,28 @@ class user_class:
             self.read_redressal.append(user_id)
 
     def read_issues(self):
-        issue_list = self.issue_repo.list()
         while True:
-            # print exit and list of issues
-            print("0) Exit")
-            for index, issue in enumerate(issue_list):
-                upvotes = len(issue.upvotes)
-                downvotes = len(issue.downvotes)
-                print(str(index+1)+") "+issue.title, end=" ")
-                print("("+str(upvotes)+"👍"+str(downvotes)+"👎"+")", end=" ")
-                print("("+str(issue.status)+")")
-            action = int(input("Action: "))
+            print()
+            print('Here are a list of issues, ordered from the most popular.')
+            issue_list = self.issue_repo.list_by_issue_votes()
 
+            # print exit and list of issues
+            print("0. Exit")
+            print_issues(issue_list)
+
+            action = int(input("Action: "))
             if action == 0:
                 break
 
             else:
                 issue = issue_list[action-1]
-                user_vote = False
-                if self.user.id in issue.upvotes or self.user.id in issue.downvotes or issue.id in self.new_vote_issue_ids:
-                    user_vote = True
 
-                # print details of the issue
-                print("Title: "+issue.title)
-                print("Description: "+issue.desc)
-                print("Category: ", issue.category)
-                print("Status: ", issue.status)
-                print("votes: "+str(issue.upvotes)+"👍"+str(issue.downvotes)+"👎")
+                # Print details of issue
+                print()
+                user_vote = print_issue_details(issue, self.user)
 
-                # If use already voted
-                if user_vote:
-                    print("You have voted for this issue")
-                    print("0) Exit")
-                    action = int(input("Action: "))
-                    if action == 0:
-                        pass
-
-                else:
-                    print("You haven't voted for this issue")
+                # If user has not voted
+                if not user_vote:
                     print("0) Exit")
                     print("1) Upvote")
                     print("2) Downvote")
@@ -86,8 +69,6 @@ class user_class:
                                       issue=issue, redressal=None)
                         # add issue id to new_vote_issue_ids
                         self.new_vote_issue_ids.add(issue.id)
-                    else:
-                        pass
 
     def read_redressal(self):
         issue_list = self.issue_repo.list()
@@ -130,7 +111,8 @@ class user_class:
                 print("Issue: "+issue.title)
                 print("Status: "+issue.status)
                 print("Redressal id: "+redressal_id)
-                print("votes: "+str(redressal.upvotes)+"👍"+str(redressal.downvotes)+"👎")
+                print("votes: "+str(redressal.upvotes) +
+                      "👍"+str(redressal.downvotes)+"👎")
 
                 # TODO: List Redressal Timeline
 
@@ -161,7 +143,7 @@ class user_class:
                         pass
 
     def write_issue(self):
-        issue_cateogry = ""
+        issue_category = ""
         print("Choose the issue category you want to publish")
         print("1) Admin")
         print("2) Transport")
@@ -176,12 +158,12 @@ class user_class:
             3: "ENVIRONMENT",
             4: "EDUCATION"
         }
-        issue_cateogry = options[action]
+        issue_category = options[action]
         issue_title = input("Issue title: ")
         issue_description = input("Issue description: ")
         new_issue = Issue(
             id='',  # New data
-            category=issue_cateogry,
+            category=issue_category,
             status="PENDING",
             title=issue_title,
             desc=issue_description,
@@ -194,10 +176,10 @@ class user_class:
         while True:
             print("""
 What do you want to do?
+0. Exit
 1. Read issue
 2. Read redressal
 3. Post issue
-0. Exit
             """)
             action = int(input("Action: "))
             if action == 1:
@@ -207,4 +189,5 @@ What do you want to do?
             elif action == 3:
                 self.write_issue()
             elif action == 0:
+                print()
                 break

@@ -36,7 +36,16 @@ def print_redressed_issues(issues: List[Issue], repo: RedressalRepository):
         )
 
 
-def print_issue_details(issue: Issue, user: User):
+def print_issue_details(issue: Issue, user: User) -> bool:
+    """Prints the details of the issue and return `True` if the user has voted for the issue.
+
+    Args:
+        issue (Issue): The issue to be printed.
+        user (User): The current user signed in.
+
+    Returns:
+        bool: `True` if the user has voted for the issue. Not applicable for admin users.
+    """
     print("Title: " + issue.title)
     print("Description: " + issue.desc)
     print("Category: " + issue.category)
@@ -44,12 +53,19 @@ def print_issue_details(issue: Issue, user: User):
     print(f"Votes: {len(issue.upvotes)} 👍 {len(issue.downvotes)} 👎")
 
     if not user.is_admin:
+        print()
+
         if user.uid in issue.upvotes:
             print('You 👍 this issue')
+            return True
         elif user.uid in issue.downvotes:
             print("You 👎 this issue")
+            return True
         else:
             print("You have not voted for this issue.")
+            return False
+
+    return False
 
 
 def print_redressal_items(items: List[RedressalItem]):

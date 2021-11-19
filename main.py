@@ -3,12 +3,10 @@ import firebase_admin
 from firebase_admin import credentials
 
 from data.user import User
-from repository.issue_repository import IssueRepository
-from repository.redressal_repository import RedressalRepository, RedressalItemRepository
 from repository.user_repository import UserRepository
 from service.auth_service import AuthService
 from getpass import getpass
-from service.user_service import user_class
+from user import UserFlow
 from admin import AdminFlow
 
 
@@ -43,12 +41,10 @@ def sign_in(auth: AuthService, repo: UserRepository):
 
     # Run the main app flow
     if user.is_admin:
-        # TODO: Run admin flow
         admin_flow = AdminFlow(user)
         admin_flow.main()
     else:
-        # TODO: Run user flow
-        user = user_class(user)
+        user = UserFlow(user)
         user.main()
 
 
