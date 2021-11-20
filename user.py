@@ -1,5 +1,5 @@
 from repository.issue_repository import IssueRepository
-from repository.redressal_repository import RedressalRepository
+from repository.redressal_repository import RedressalRepository, RedressalItemRepository
 from data.issue import Issue
 from utils.printing import print_issues, print_issue_details
 
@@ -94,8 +94,9 @@ class UserFlow:
                     redressal = self.redressal_repo.get(redressal_id)
 
                 # Check user has vote the redressal
-                if redressal_id in self.new_vote_redressal_ids or self.user.id in redressal.upvotes or self.user.id in redressal.downvotes:
-                    user_voted = True
+                if redressal_id != None:
+                    if redressal_id in self.new_vote_redressal_ids or self.user.id in redressal.upvotes or self.user.id in redressal.downvotes:
+                        user_voted = True
 
                 """
                 Issue: Bis NTU lambat
@@ -110,37 +111,44 @@ class UserFlow:
 
                 print("Issue: "+issue.title)
                 print("Status: "+issue.status)
-                print("Redressal id: "+redressal_id)
-                print("votes: "+str(redressal.upvotes) +
-                      "👍"+str(redressal.downvotes)+"👎")
+                if redressal_id != None:
+                    print("Redressal id: "+redressal_id)
+                    print("votes: "+str(len(redressal.upvotes)) +
+                          "👍"+str(len(redressal.downvotes))+"👎")
+                    # TODO: List Redressal Timeline
+                    redressal_items = self.redressal_repo.items(redressal)
+                    for item in redressal_items:
+                        timestamp = list(str(item.created_dt))
+                        timestamp = "".join(timestamp[:-7])
+                        print("("+timestamp+") "+item.message)
 
-                # TODO: List Redressal Timeline
+                    print()
+                    if user_voted:
+                        print("You have voted for this issue")
+                        print("0) Exit")
+                        action = int(input("Action: "))
+                        if action == 0:
+                            pass
 
-                if user_voted:
-                    print("You have voted for this issue")
-                    print("0) Exit")
-                    action = int(input("Action: "))
-                    if action == 0:
-                        pass
-
-                else:
-                    print("You haven't voted for this issue")
-                    print("0) Exit")
-                    print("1) Upvote")
-                    print("2) Downvote")
-                    action = int(input("Action: "))
-                    if action == 1:
-                        self.upvote(user_id=self.user.id,
-                                    issue=None, redressal=redressal)
-                        # add issue id to new_vote_redressal_ids
-                        self.new_vote_redressal_ids.add(redressal_id)
-                    elif action == 2:
-                        self.downvote(user_id=self.user.id,
-                                      issue=None, redressal=redressal)
-                        # add issue id to new_vote_redressal_ids
-                        self.new_vote_redressal_ids.add(redressal_id)
                     else:
-                        pass
+                        print("You haven't voted for this issue")
+                        print("0) Exit")
+                        print("1) Upvote")
+                        print("2) Downvote")
+                        action = int(input("Action: "))
+                        if action == 1:
+                            self.upvote(user_id=self.user.id,
+                                        issue=None, redressal=redressal)
+                            # add redressal id to new_vote_redressal_ids
+                            self.new_vote_redressal_ids.add(redressal_id)
+                        elif action == 2:
+                            self.downvote(user_id=self.user.id,
+                                          issue=None, redressal=redressal)
+                            # add redressal id to new_vote_redressal_ids
+                            self.new_vote_redressal_ids.add(redressal_id)
+                        else:
+                            pass
+                print()
 
     def write_issue(self):
         issue_category = ""
