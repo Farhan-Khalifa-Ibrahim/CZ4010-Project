@@ -38,7 +38,7 @@ python main.py
 
 Accounts signed up using the application will always be a public user. Admin users are assumed to be created using a different system with higher privilege.
 
-To simulate this creation, manually create the admin accounts from Firebase console.
+To simulate this creation, manually create the admin accounts from [Firebase console](https://console.firebase.google.com/).
 
 1. Go to your Firebase Auth in your Firebase console
 2. Under "Users" section, click "Add user" and enter the credentials
@@ -70,6 +70,7 @@ They can also support the issue by upvoting or downvoting the issue.
 #### View, upvote or downvote redressal
 
 Public user can see the redressal progress of the issue in detail. They can upvote or downvote to express their satisfaction/dissatisfaction.
+
 ![Redressal demo](/docs/view-redressal.png)
 
 ### Admin User
