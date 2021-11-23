@@ -34,35 +34,97 @@ Finally, run `main.py` to start the application.
 python main.py
 ```
 
-## Research
+### Creating Admin Users (Optional)
 
-TODO
+Accounts signed up using the application will always be a public user. Admin users are assumed to be created using a different system with higher privilege.
+
+To simulate this creation, manually create the admin accounts from Firebase console.
+
+1. Go to your Firebase Auth in your Firebase console
+2. Under "Users" section, click "Add user" and enter the credentials
+3. Copy the account's UID and go to Firestore Database
+4. Inside the "user" collection, add document
+5. Add the field `uid` and set it to the account's UID
+6. Add the field `is_admin` and set it to `true`
+7. Add the field `category` and set it to one of these values: `ADMIN`, `FACILITIES`, `ENVIRONMENT`, `EDUCATION`
+
+## Features
+
+### Public User
+
+#### Post issue anonymously
+
+Public user can specify the details of the issue, set a category to the issue, without worrying that their identity will be disclosed.
+![Post issue demo](/docs/post-issue.png)
+
+When posted, the admin user that is assigned to that category will be notified.
+
+#### View, upvote, or downvote issue
+
+Public users can see the list of issues, sorted by the number of votes.
+![List issue demo](/docs/list-issue.png)
+
+They can also support the issue by upvoting or downvoting the issue.
+![Vote issue demo](/docs/vote-issue.png)
+
+#### View, upvote or downvote redressal
+
+Public user can see the redressal progress of the issue in detail. They can upvote or downvote to express their satisfaction/dissatisfaction.
+![Redressal demo](/docs/view-redressal.png)
+
+### Admin User
+
+#### Received targeted issue
+
+Receive only issues that are specific to admin's assigned category. The admin can see the statistics of the issues: how many new pending issues, how many issues are in progress, and any redressal complaints if any.
+![Admin notified demo](/docs/admin-notify.png)
+
+#### Handle issue
+
+Make updates to the issue by adding action items or changing the issue status. If issues are deemed as fake, admin can reject the issue.
+![Add redressal item demo](/docs/update-issue.png)
+
+If the issue has been redressed before, admin can link it to the relevant past redressal.
+![Link redressal demo](/docs/solve-issue-link.png)
+
+### View Redressal Satisfaction
+
+Admin user can list issues that have been redressed and see the public user's votes for the redressal. If the votes shows dissatisfaction, admin user can reopen the issue.
+![List redressed issues](/docs/admin-issue-redressed.png)
 
 ## Design Considerations
 
 ### Anonymous with Responsibility
 
-Issues, redressal, and votes do not display the user.
+The system encrypts the user id whenever it needs to be persisted to the database. Also, the system will not display the user id at any point.
 
-Responsibility measures:
+Unfortunately, anonymity and accountability is a trade-off. In this case, posting anonymously means that the posted issue can be invalid. To reduce this probability, the following measures are implemented:
 
-- Posts, redressal, and votes can only be created if you have account
-- Only 1 account allowed per email address
+- Posts, redressal, and votes can only be created with an account, without disclosing the identity of the account
+- Only 1 account is allowed per email address
 
 ### Transparency
 
-The public user can see the progress of redressal.
+The public user can see the progress of redressal so that they know the issue is being addressed. This timeline displays the date and time as well as the message from admin.
 
-Display image of redressal timeline here
+This also handles the case in which a user posts an issue that has been redressed but nobody knows about it. Admin user will link it to the past redressal, so the user can see that it really has been redressed.
 
 ### Integrity of Grieve and Redressal
 
-Issues and the corresponding redressal are ensured that they are genuine by public voting.
-Post issue -> the public supports your case
-Post redressal -> accountability of voting protects your case.
+The system should ensure that both issues and redressal are genuine. This is done by public voting mechanism.
+
+If an issue is invalid, public users can downvote the issue. When there are at least 10 votes and at least 70% of them are downvotes, the system assumes that the issue is invalid. Admin user can then decide if they want to reject the issue.
+
+If an issue is valid but not redressed, public users can upvote the issue. List of issues that the user and the admin see is sorted by the number of votes. Therefore, issues with a lot of upvotes will get the limelight to be noticed by admin. On the other hand, issues with a lot of downvotes will attract more public users to vote, thus, the validity of the issue is more accurate.
+
+If the redressal is invalid or unsatisfactory, public users can downvote the redressal. When there are at least 10 votes and at least 70% of them are downvotes, this will be reported to the admin. The admin can then reopen the issue.
+
+If the redressal is valid, public users can upvote the redressal. This will help other public users to confirm that the issue has been redressed properly.
 
 ## Development Stack
 
-- Python cryptography library
-- Firebase Auth
-- Firebase Firestore
+The following tech stacks are used.
+
+- [Python cryptography](https://cryptography.io/en/latest/) for cryptographic operations
+- [Firebase Auth](https://firebase.google.com/docs/auth) for authentication layer
+- [Firebase Firestore](https://firebase.google.com/docs/firestore) as the database
