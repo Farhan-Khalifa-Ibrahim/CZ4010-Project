@@ -1,7 +1,44 @@
 # CZ4010-Project
 
-## Report
-[Project Report](https://docs.google.com/document/d/1muj1oRSUr-6eK2ajxkuAor-gu8bGWZPGdCS-bRVE-aM/edit?usp=sharing)
+## Power point
+[powerpoint link](https://docs.google.com/presentation/d/12kHPRz6rJX27t0S0U4ka4xq6Q55CTEB-xQll5Plqgp4/edit?usp=sharing)
+
+power point
+
+(Alif)
+1. Project apa
+
+2. Ngebedain app kita sama app lain
+   - fitur
+	what user can do
+	- post issue
+	- upvote downvote
+	- read issue sama redressal
+	what admin can do
+
+   - integrity issue -> karena upvote downvote
+   - Ada redressal
+
+(Sebastian)
+3. kenapa secure 
+	- arti secure di app kita -> CIA (confidential,integrity,availability)
+	- confidential di db karena user detail di hash ke user_id
+	- integrity karena https, 1 email to 1 user
+
+4. Security Firebase
+	- jelasin cryptography firebase
+
+5. demo
+	- bikin script
+         (Alif)
+        - user  -> post issue
+ 		-> upvote downvote issue
+		-> liat redressal
+		-> upvote downvote redressal
+	(Sebastian)
+	- Admin -> Liat issue
+		-> update issue status (reject,progress,complete)
+		-> Redressed issue
 
 ## Resource
 [Grievance Redressal](https://en.wikipedia.org/wiki/Grievance_redressal)

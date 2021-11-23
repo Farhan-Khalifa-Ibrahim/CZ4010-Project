@@ -1,5 +1,5 @@
 from repository.issue_repository import IssueRepository
-from repository.redressal_repository import RedressalRepository
+from repository.redressal_repository import RedressalRepository, RedressalItemRepository
 from data.issue import Issue
 from data.const import IN_PROGRESS, REDRESSED
 from utils.printing import print_issues, print_issue_details, print_redressal_details
