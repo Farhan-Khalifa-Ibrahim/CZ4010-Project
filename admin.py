@@ -28,7 +28,9 @@ class AdminFlow:
             print(f"The id {redressal_id} doesn't exist!")
             return
 
+        # Link to other redressal
         issue.redressal_id = redressal_id
+        # Mark the issue as redressed
         issue.status = REDRESSED
         self.issue_repo.save(issue)
 
@@ -156,7 +158,7 @@ class AdminFlow:
 
     def view_redressed(self, issue, redressal):
         print_redressal_details(
-            issue, redressal, self.red_repo.items(redressal))
+            issue, redressal, self.red_repo.items(redressal), self.user)
 
         if redressal.complaint:
             print('Users are not satisfied with the redressal!')
@@ -237,6 +239,7 @@ class AdminFlow:
             action = input('Action: ')
 
             if action == '0':
+                print()
                 break
             elif action == '1':
                 print()

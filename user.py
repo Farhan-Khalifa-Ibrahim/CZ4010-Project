@@ -1,7 +1,10 @@
+from typing import Optional
+from data.redressal import Redressal
 from repository.issue_repository import IssueRepository
-from repository.redressal_repository import RedressalRepository, RedressalItemRepository
+from repository.redressal_repository import RedressalRepository
+from repository.user_repository import UserRepository
 from data.issue import Issue
-from data.const import IN_PROGRESS, REDRESSED
+from data.const import ADMIN, EDUCATION, ENVIRONMENT, FACILITIES
 from utils.printing import print_issues, print_issue_details, print_redressal_details
 
 
@@ -10,26 +13,39 @@ class UserFlow:
         self.user = user
         self.issue_repo = IssueRepository()
         self.redressal_repo = RedressalRepository()
+        self.user_repo = UserRepository()
 
-    def upvote(self, user_id, issue, redressal):
+    def upvote(self, issue: Optional[Issue], redressal: Optional[Redressal]):
         # upvote issue or redressal
         if issue:
-            issue.upvotes.append(user_id)
+            issue.upvote(self.user)
             self.issue_repo.save(issue)
 
+            self.user.vote_for(issue)
+            self.user_repo.save(self.user)
+
         elif redressal:
-            redressal.upvotes.append(user_id)
+            redressal.upvote(self.user)
             self.redressal_repo.save(redressal)
 
-    def downvote(self, user_id, issue, redressal):
+            self.user.vote_for(redressal)
+            self.user_repo.save(self.user)
+
+    def downvote(self, issue: Optional[Issue], redressal: Optional[Redressal]):
         # downvote issue or redressal
         if issue:
-            issue.downvotes.append(user_id)
+            issue.downvote(self.user)
             self.issue_repo.save(issue)
 
+            self.user.vote_for(issue)
+            self.user_repo.save(self.user)
+
         elif redressal:
-            redressal.downvotes.append(user_id)
-            self.read_redressal.append(user_id)
+            redressal.downvote(self.user)
+            self.redressal_repo.save(redressal)
+
+            self.user.vote_for(redressal)
+            self.user_repo.save(self.user)
 
     def read_issues(self):
         while True:
@@ -59,11 +75,9 @@ class UserFlow:
                     print("2) Downvote")
                     action = int(input("Action: "))
                     if action == 1:
-                        self.upvote(user_id=self.user.id,
-                                    issue=issue, redressal=None)
+                        self.upvote(issue=issue, redressal=None)
                     elif action == 2:
-                        self.downvote(user_id=self.user.id,
-                                      issue=issue, redressal=None)
+                        self.downvote(issue=issue, redressal=None)
 
     def read_redressal(self):
         while True:
@@ -82,7 +96,8 @@ class UserFlow:
                 print()
 
                 issue = issue_list[action-1]
-                user_voted = False
+
+                # Get the redressal data for the issue if any.
                 redressal_id = issue.redressal_id
 
                 if redressal_id == None:
@@ -92,29 +107,19 @@ class UserFlow:
                 redressal = self.redressal_repo.get(redressal_id)
                 redressal_items = self.redressal_repo.items(redressal)
 
-                # Check user has vote the redressal
-                if self.user.id in redressal.upvotes or self.user.id in redressal.downvotes:
-                    user_voted = True
+                # Print redressal details
+                user_voted = print_redressal_details(
+                    issue, redressal, redressal_items, self.user)
 
-                print_redressal_details(issue, redressal, redressal_items)
-
-                if user_voted:
-                    if self.user.id in redressal.upvotes:
-                        print("You 👍 this redressal.")
-                    else:
-                        print('You 👎 this redressal.')
-                else:
-                    print("You haven't voted for this redressal!")
+                if not user_voted:
                     print("0) Exit")
                     print("1) Upvote")
                     print("2) Downvote")
                     action = int(input("Action: "))
                     if action == 1:
-                        self.upvote(user_id=self.user.id,
-                                    issue=None, redressal=redressal)
+                        self.upvote(issue=None, redressal=redressal)
                     elif action == 2:
-                        self.downvote(user_id=self.user.id,
-                                      issue=None, redressal=redressal)
+                        self.downvote(issue=None, redressal=redressal)
 
     def write_issue(self):
         print()
@@ -133,10 +138,10 @@ class UserFlow:
             return
 
         options = {
-            1: "ADMIN",
-            2: "TRANSPORT",
-            3: "ENVIRONMENT",
-            4: "EDUCATION"
+            1: ADMIN,
+            2: FACILITIES,
+            3: ENVIRONMENT,
+            4: EDUCATION
         }
         issue_category = options[action]
         issue_title = input("Issue title: ")

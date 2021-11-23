@@ -28,6 +28,7 @@ def print_issues(issues: List[Issue]):
 
 
 def print_redressed_issues(issues: List[Issue], repo: RedressalRepository):
+    """Print issues that have been redressed."""
     for num, issue in enumerate(issues, start=1):
         r = repo.get(issue.redressal_id)
 
@@ -55,11 +56,8 @@ def print_issue_details(issue: Issue, user: User) -> bool:
     if not user.is_admin:
         print()
 
-        if user.uid in issue.upvotes:
-            print('You 👍 this issue')
-            return True
-        elif user.uid in issue.downvotes:
-            print("You 👎 this issue")
+        if user.has_voted(issue):
+            print('You have voted for this issue.')
             return True
         else:
             print("You have not voted for this issue.")
@@ -69,21 +67,34 @@ def print_issue_details(issue: Issue, user: User) -> bool:
 
 
 def print_redressal_items(items: List[RedressalItem]):
+    """Prints the redressal timeline."""
     for item in items:
         timing = datetime.strftime(item.created_dt, '%d %B %Y, %H:%M')
         print(f'({timing}) {item.message}')
 
 
-def print_redressal_details(issue: Issue, redressal: Redressal, items: List[RedressalItem]):
-    # Redressal id: asjdkasduhid
-    # Issue: Bis NTU lambat
-    # Status: REDRESSED
-    # Votes: 50 👍 3 👎
+def print_redressal_details(issue: Issue, redressal: Redressal, items: List[RedressalItem], user: User) -> bool:
+    """Prints the details of the redressal and return `True` if the user has voted for the redressal.
 
-    # (4 Nov 2021 07:00) Admin is taking action -> waktu status diganti jd in progress
-    # (4 Nov 2021 08:00) Redirected to supervisor
-    # (4 Nov 2021 10:00) Communicating to Tong Tar Transport
-    # (4 Nov 2021 11:00) Action completed
+    Example:
+    Redressal id: id
+    Issue: Bis NTU lambat
+    Status: REDRESSED
+    Votes: 50 👍 3 👎
+
+    (4 Nov 2021 07:00) Admin is taking action
+    (4 Nov 2021 08:00) Redirected to supervisor
+    (4 Nov 2021 10:00) Communicating to Tong Tar Transport
+    (4 Nov 2021 11:00) Action completed
+
+    Args:
+        issue (Redressal): The redressal to be printed.
+        user (User): The current user signed in.
+
+    Returns:
+        bool: `True` if the user has voted for the redressal. Not applicable for admin users.
+    """
+
     print(f"Redressal ID: {redressal.id}")
     print(f"Issue: {issue.title}")
     print(f'Status: {issue.status}')
@@ -96,3 +107,15 @@ def print_redressal_details(issue: Issue, redressal: Redressal, items: List[Redr
     if len(items) != 0:
         print()
         print_redressal_items(items)
+
+    # Print voting status for normal users.
+    if not user.is_admin:
+        print()
+
+        voted = user.has_voted(redressal)
+        if voted:
+            print("You have voted for this redressal.")
+            return True
+        else:
+            print("You haven't voted for this redressal.")
+            return False

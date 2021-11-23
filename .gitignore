@@ -1,9 +1,15 @@
 # Python cache
 __pycache__
 
+# VSCode
+.vscode
+
 # Testing playground
 test.py
 
 # Firebase related keys
 firebase_key.json
 service_account.json
+
+# Private key
+key

@@ -1,4 +1,5 @@
 from typing import List
+from crypto import encrypt
 from data.user import User
 from .firestore_repository import FirestoreRepository
 from data.redressal import Redressal, RedressalItem
@@ -29,7 +30,9 @@ class RedressalRepository(FirestoreRepository):
 
     def add_redressal_item(self, redressal: Redressal, message: str, user: User):
         # Create a new item
-        new_item = RedressalItem(id='', message=message, signed_by=user.uid)
+        new_item = RedressalItem(
+            id='', message=message, signed_by=user.encrypted_uid
+        )
         new_item = self.item_repo.save(new_item)
         new_item_id = new_item.id
 
@@ -38,12 +41,17 @@ class RedressalRepository(FirestoreRepository):
         self.save(redressal)
 
     def items(self, redressal: Redressal) -> List[RedressalItem]:
+        """Retrieve all redressal items for the given redressal."""
+
+        # Convert all item ids into items.
         items = list(
             map(lambda id: self.item_repo.get(id), redressal.item_ids))
 
+        # Sort based on create time.
         return sorted(items, key=lambda item: item.created_at)
 
     def clear_votes(self, redressal: Redressal):
+        """Remove all votes for the given redressal."""
         redressal.upvotes.clear()
         redressal.downvotes.clear()
         self.save(redressal)

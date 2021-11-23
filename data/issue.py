@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Optional, Set
+from data.const import VOTED_DOWN, VOTED_NONE, VOTED_UP
 
 from utils.time import current_timestamp
 
@@ -8,6 +9,8 @@ from utils.time import current_timestamp
 class Issue:
     id: str
     '''The issue id.'''
+    user_id: str
+    '''The encrypted user id that submits this issue.'''
     category: str
     '''Which category the issue belongs to.'''
     status: str
@@ -16,13 +19,14 @@ class Issue:
     '''The title of the issue.'''
     desc: str
     '''The description of the issue.'''
-    upvotes: List[str] = field(default_factory=list)
-    '''Signatures of users who upvote the issue.'''
-    downvotes: List[str] = field(default_factory=list)
-    '''Signatures of users who downvote the issue.'''
+    upvotes: Set[str] = field(default_factory=set)
+    '''Encrypted user ids who upvote the issue.'''
+    downvotes: Set[str] = field(default_factory=set)
+    '''Encrypted user ids who downvote the issue.'''
     redressal_id: Optional[str] = None
     '''Reference to the redressal.'''
     created_at: float = current_timestamp()
+    '''When the issue was created.'''
 
     @property
     def up_count(self) -> int:
@@ -53,15 +57,16 @@ class Issue:
     @staticmethod
     def from_firestore(id, data):
         return Issue(
-            id,
-            data['category'],
-            data['status'],
-            data['title'],
-            data['desc'],
-            data['upvotes'],
-            data['downvotes'],
-            data['redressal_id'],
-            data['created_at']
+            id=id,
+            category=data['category'],
+            status=data['status'],
+            title=data['title'],
+            desc=data['desc'],
+            upvotes=set(data['upvotes']),
+            downvotes=set(data['downvotes']),
+            redressal_id=data['redressal_id'],
+            created_at=data['created_at'],
+            user_id=data['user_id']
         )
 
     def to_firestore(self):
@@ -73,5 +78,14 @@ class Issue:
             'upvotes': self.upvotes,
             'downvotes': self.downvotes,
             'redressal_id': self.redressal_id,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'user_id': self.user_id
         }
+
+    def upvote(self, user):
+        """Upvote this issue."""
+        self.upvotes.add(user.encrypted_uid)
+
+    def downvote(self, user):
+        """Downvote this issue."""
+        self.downvotes.add(user.encrypted_uid)

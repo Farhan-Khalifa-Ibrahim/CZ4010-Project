@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
+from typing import List, Set
 
 from utils.time import current_timestamp, from_timestamp
 
@@ -13,9 +13,9 @@ class Redressal:
     '''The timestamp the redressal was created in POSIX.'''
     item_ids: List[str] = field(default_factory=list)
     '''The ids of the updates regarding this addressal.'''
-    upvotes: List[str] = field(default_factory=list)
+    upvotes: Set[str] = field(default_factory=set)
     '''Signatures of users who upvote the redressal.'''
-    downvotes: List[str] = field(default_factory=list)
+    downvotes: Set[str] = field(default_factory=set)
     '''Signatures of users who downvote the redressal.'''
 
     @property
@@ -36,7 +36,7 @@ class Redressal:
         """
         if self.down_count == 0:
             return False
-            
+
         total_votes = self.up_count + self.down_count
         neg_percent = int(self.up_count * 100 / self.down_count)
 
@@ -48,8 +48,8 @@ class Redressal:
             id=id,
             created_at=data['created_at'],
             item_ids=data['item_ids'],
-            upvotes=data['upvotes'],
-            downvotes=data['downvotes']
+            upvotes=set(data['upvotes']),
+            downvotes=set(data['downvotes'])
         )
 
     def to_firestore(self):
@@ -59,6 +59,14 @@ class Redressal:
             'upvotes': self.upvotes,
             'downvotes': self.downvotes
         }
+
+    def upvote(self, user):
+        """Upvote this issue."""
+        self.upvotes.add(user.encrypted_uid)
+
+    def downvote(self, user):
+        """Downvote this issue."""
+        self.downvotes.add(user.encrypted_uid)
 
 
 @dataclass
