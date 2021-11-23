@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from os import stat
 from typing import Optional, Set, Union
 
 from crypto import encrypt

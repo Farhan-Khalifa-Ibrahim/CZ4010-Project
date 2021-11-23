@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from typing import Optional, Set
-from data.const import VOTED_DOWN, VOTED_NONE, VOTED_UP
 
 from utils.time import current_timestamp
 
