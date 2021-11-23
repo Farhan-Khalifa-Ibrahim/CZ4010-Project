@@ -152,6 +152,7 @@ class UserFlow:
             status="PENDING",
             title=issue_title,
             desc=issue_description,
+            user_id=self.user.encrypted_uid,
         )
 
         # save issue
