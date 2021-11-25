@@ -1,7 +1,7 @@
 # CZ4010-Project
 
-## Power point
-[powerpoint link](https://docs.google.com/presentation/d/12kHPRz6rJX27t0S0U4ka4xq6Q55CTEB-xQll5Plqgp4/edit?usp=sharing)
+## Drive Folder
+[Folder Link](https://drive.google.com/drive/folders/1teLDCP7emATSxFEZ7sHP_DhlukvAmtN-?usp=sharing)
 
 power point
 
