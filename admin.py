@@ -40,7 +40,7 @@ class AdminFlow:
 
         if decision == 'y':
             issue.status = REJECTED
-            self.red_repo.save(issue)
+            self.issue_repo.save(issue)
 
     def log_redressal_activity(self, redressal_id):
         redressal = self.red_repo.get(redressal_id)

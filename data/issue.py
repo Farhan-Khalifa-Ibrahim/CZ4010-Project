@@ -49,7 +49,7 @@ class Issue:
             return False
 
         total_votes = self.up_count + self.down_count
-        neg_percent = int(self.up_count * 100 / self.down_count)
+        neg_percent = int(self.down_count * 100 / total_votes)
 
         return total_votes >= 10 and neg_percent > 70
 

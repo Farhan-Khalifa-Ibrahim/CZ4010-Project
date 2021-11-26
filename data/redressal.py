@@ -38,7 +38,7 @@ class Redressal:
             return False
 
         total_votes = self.up_count + self.down_count
-        neg_percent = int(self.up_count * 100 / self.down_count)
+        neg_percent = int(self.down_count * 100 / total_votes)
 
         return total_votes >= 10 and neg_percent > 70
 
@@ -80,7 +80,7 @@ class RedressalItem:
     message: str
     '''The message to be displayed to the user.'''
     signed_by: str
-    '''The signature of the admin that adds the item.'''
+    '''The admin that adds the item.'''
     created_at: float = current_timestamp()
     '''The timestamp in POSIX.'''
 
