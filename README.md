@@ -1,3 +1,24 @@
+Console-based anonymous and secure grievance redressal application.
+
+## Table of Contents
+
+- [Motivation](#motivation)
+- [Getting Started](#getting-started)
+  - [Requirements](#requirements)
+  - [Running the App](#running-the-app)
+  - [Creating Admin Users (Optional)](#creating-admin-users-optional)
+- [Features](#features)
+  - [Public User](#public-user)
+  - [Admin User](#admin-user)
+- [Design Considerations](#design-considerations)
+  - [Anonymous with Responsibility](#anonymous-with-responsibility)
+  - [Transparency](#transparency)
+  - [Integrity of Grieve and Redressal](#integrity-of-grieve-and-redressal)
+- [Development Stack](#development-stack)
+- [For the More Advanced](#for-the-more-advanced)
+  - [App Architecture](#app-architecture)
+  - [Data Structure](#data-structure)
+
 ## Motivation
 
 Grieve is a part of everyday life as a human. However, it does not mean that grieve should not be reported, especially if it is harmful to the society. Because everyone has a right to voice out to the one of authority responsibly. Unfortunately, their voices are not always heard or there are not enough attentions received. The main reason is that many voices lacks the power to remain relevant or seen as crucial.
@@ -127,5 +148,39 @@ If the redressal is valid, public users can upvote the redressal. This will help
 The following tech stacks are used.
 
 - [Python cryptography](https://cryptography.io/en/latest/) for cryptographic operations
-- [Firebase Auth](https://firebase.google.com/docs/auth) for authentication layer
+- [Firebase Auth](https://firebase.google.com/docs/auth) for user authentication
 - [Firebase Firestore](https://firebase.google.com/docs/firestore) as the database
+
+## For the More Advanced
+
+### App Architecture
+
+The application uses 3 different layers to separate responsibilities. The following diagram shows the relation between layers.
+
+![App Architecture](/docs/general-diagram.png)
+
+#### Application Layer
+
+This layer is the layer that the user interacts with. It receives interaction from user and receives data from the repository layer.
+
+The entry point of the app is `main.py`. This file will then call `user.py` if the authenticated user is a public user or `admin.py` if the authenticated user is an admin.
+
+#### Repository Layer
+
+This layer receives and sends data from and to Cloud Firestore. It is also the layer for making authentication requests to Firebase Authentication.
+
+For more information on data persisting, see the [the repository subdirectory](/repository).
+
+For more information on authentication, see the [the service subdirectory](/service).
+
+#### Firestore Layer
+
+This layer contains services provided by Firebase.
+
+### Data Structure
+
+The following diagram is the entity relation diagram for this application.
+
+![ER Diagram](/docs/er-diagram.png)
+
+For more information on the entities and their attributes, see the [the data subdirectory](/data).
