@@ -173,7 +173,7 @@ For more information on data persisting, see the [the repository subdirectory](/
 
 For more information on authentication, see the [the service subdirectory](/service).
 
-#### Firestore Layer
+#### Firebase Layer
 
 This layer contains services provided by Firebase.
 
